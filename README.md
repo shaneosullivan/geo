@@ -16,20 +16,26 @@ meantime.
 
 Everything is relative to the base URL, `https://geo.chofter.com/v1`.
 
-- `countries.json`: `[code, name, count]` per country.
+- `countries.json`: `[code, name, count, altNames?]` per country. The UK is
+  listed as its four nations, `GB-ENG`, `GB-SCT`, `GB-WLS` and `GB-NIR`, each
+  with `altNames` `["United Kingdom", "UK"]`.
 - `{cc}/_.json`: `{ name, depth, count, shards, top }`, where `cc` is the
-  lowercase ISO 3166-1 alpha-2 code. For a small country `depth` is 0, `shards`
-  is empty and `top` holds every place.
+  lowercase ISO 3166-1 alpha-2 code, or a nation's code such as `gb-eng`. For
+  a small country `depth` is 0, `shards` is empty and `top` holds every place.
 - `{cc}/{key}.json`: an array of places for one prefix.
 - A place is `[name, region, lat, lng, population, geonameId, altNames?, district?, localName?]`.
   Trailing items are left out, and one that is missing before a present one is
   `[]` (`altNames`) or `""`.
   - `district` (a county or district) is there only when another place in the
     country has the same name and region. Show it in the label, as in
-    "Blackrock, Louth, Leinster, Ireland".
+    "Plantation, Broward County, Florida, United States".
   - `localName` is the name in the country's first official language, such as
     "서울" for Seoul, when that language is not English and the name differs
     from `name`. It is searchable like an alternate name.
+- In Ireland a place's region is its county, and in the UK its council area.
+- `gb/_.json` holds the whole UK. It also has `parts`, each nation's code and
+  name, and `regionParts`, the nation of each region, so a search of `GB` can
+  report each place's nation as its country.
 
 ## Search algorithm
 
@@ -44,7 +50,8 @@ Everything is relative to the base URL, `https://geo.chofter.com/v1`.
    tier over all its names, and remember which name gave it.
 4. Sort by tier, then by population descending (a stable sort), and return the
    first `limit` (default 10). Report the alternate name that matched, if it was
-   not the main name.
+   not the main name. If the index has `regionParts`, a place's country is the
+   part its region maps to.
 
 `normalize` and `fileKey` are defined in [`conformance/`](conformance/), which
 also holds the cases every client must pass.

@@ -119,19 +119,28 @@ test("result shape", async () => {
   assert.deepEqual(dublin, {
     id: 2964574,
     name: "Dublin",
-    region: "Leinster",
+    region: "County Dublin",
     country: "Ireland",
     countryCode: "IE",
     lat: 53.3331,
     lng: -6.2489,
     population: 1024027,
-    label: "Dublin, Leinster, Ireland",
+    label: "Dublin, County Dublin, Ireland",
   });
   // Munich's row is [..., [], "", "München"]: the empty placeholders add nothing.
   const [munich] = await geo.search("DE", "munich");
   assert.equal(munich.localName, "München");
   assert.equal("district" in munich, false);
   assert.equal(munich.label, "Munich, Bavaria, Germany");
+  // "GB" covers the UK's nations: each result has its own nation as its country.
+  const uk = await geo.search("GB", "");
+  assert.deepEqual(
+    uk.map((p) => [p.country, p.countryCode]),
+    [
+      ["Wales", "GB-WLS"],
+      ["England", "GB-ENG"],
+    ],
+  );
   const before = requests.length;
   await geo.search("ie", "cork");
   assert.equal(requests.length, before, "a second search in a small country needs no fetch");
@@ -139,8 +148,11 @@ test("result shape", async () => {
 
 test("countries and preload", async () => {
   assert.deepEqual(await geo.countries(), [
+    { code: "GB-ENG", name: "England", count: 1, altNames: ["United Kingdom", "UK"] },
     { code: "DE", name: "Germany", count: 7 },
     { code: "IE", name: "Ireland", count: 6 },
+    { code: "US", name: "United States", count: 4 },
+    { code: "GB-WLS", name: "Wales", count: 1, altNames: ["United Kingdom", "UK"] },
   ]);
   await geo.preload("IE");
 });

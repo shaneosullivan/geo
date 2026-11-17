@@ -2,7 +2,10 @@ export interface Place {
   /** GeoNames id. */
   id: number;
   name: string;
-  /** First-level admin division (state, province, county), may be empty. */
+  /**
+   * First-level admin division (state, province), may be empty. In Ireland it
+   * is the county, and in the UK the council area.
+   */
   region: string;
   /**
    * Second-level admin division (county, district), set only when another place
@@ -16,6 +19,10 @@ export interface Place {
    */
   localName?: string;
   country: string;
+  /**
+   * ISO 3166-1 alpha-2, except for the UK's nations, which use ISO 3166-2:
+   * "GB-ENG", "GB-SCT", "GB-WLS" and "GB-NIR" (also for a search of "GB").
+   */
   countryCode: string;
   lat: number;
   lng: number;
@@ -30,6 +37,8 @@ export interface Country {
   code: string;
   name: string;
   count: number;
+  /** Other names to match in a country picker, such as "United Kingdom" and "UK" for England. */
+  altNames?: string[];
 }
 
 export interface GeoOptions {

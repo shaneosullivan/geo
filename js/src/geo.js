@@ -143,21 +143,32 @@ export function createGeo(options = {}) {
       count: index.count,
       prefixFiles: new Set(index.shards),
       topPlaces: prepare(index.top),
+      // Set for a code covering several countries ("GB" for the UK's four
+      // nations): each region's country code, and each code's name.
+      parts: index.parts,
+      regionParts: index.regionParts,
     }));
+  }
+
+  /** The country a place belongs to: its own part of `country`, if it has parts. */
+  function countryOf(country, region) {
+    const partCode = country.regionParts && country.regionParts[region];
+    return partCode ? { code: partCode, name: country.parts[partCode] } : country;
   }
 
   function toResult(country, place, nameIndex) {
     const [name, region, lat, lng, population, id, , district, localName] = place.record;
+    const { code, name: countryName } = countryOf(country, region);
     const result = {
       id,
       name,
       region,
-      country: country.name,
-      countryCode: country.code,
+      country: countryName,
+      countryCode: code,
       lat,
       lng,
       population,
-      label: [name, district, region, country.name].filter(Boolean).join(", "),
+      label: [name, district, region, countryName].filter(Boolean).join(", "),
     };
     if (district) {
       result.district = district;
@@ -214,10 +225,12 @@ export function createGeo(options = {}) {
     return matches.slice(0, limit).map((match) => toResult(country, match.place, match.nameIndex));
   }
 
-  /** Countries that have data: [{ code, name, count }]. */
+  /** Countries that have data: [{ code, name, count, altNames? }]. */
   function countries() {
     return load("countries.json", (rows) =>
-      rows.map(([code, name, count]) => ({ code, name, count })),
+      rows.map(([code, name, count, altNames]) =>
+        altNames ? { code, name, count, altNames } : { code, name, count },
+      ),
     );
   }
 

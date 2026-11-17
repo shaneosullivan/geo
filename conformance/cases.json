@@ -41,12 +41,45 @@
       "country": "IE",
       "query": "blackrock",
       "names": ["Blackrock", "Blackrock"],
-      "labels": [
-        "Blackrock, Dún Laoghaire-Rathdown, Leinster, Ireland",
-        "Blackrock, Louth, Leinster, Ireland"
-      ],
+      "labels": ["Blackrock, County Dublin, Ireland", "Blackrock, County Louth, Ireland"],
       "matched": null,
       "file": "ie/_.json"
+    },
+    {
+      "country": "US",
+      "query": "plantation",
+      "names": ["Plantation", "Plantation", "Plantation", "Plantation"],
+      "labels": [
+        "Plantation, Broward County, Florida, United States",
+        "Plantation, Sarasota County, Florida, United States",
+        "Plantation, Monroe County, Florida, United States",
+        "Plantation, Kentucky, United States"
+      ],
+      "matched": null,
+      "file": "us/_.json"
+    },
+    {
+      "country": "GB",
+      "query": "",
+      "names": ["Cardiff", "Preston"],
+      "labels": ["Cardiff, Cardiff, Wales", "Preston, Lancashire, England"],
+      "matched": null,
+      "file": "gb/_.json"
+    },
+    {
+      "country": "gb-eng",
+      "query": "pre",
+      "names": ["Preston"],
+      "labels": ["Preston, Lancashire, England"],
+      "matched": null,
+      "file": "gb-eng/_.json"
+    },
+    {
+      "country": "GB-WLS",
+      "query": "caerdydd",
+      "names": ["Cardiff"],
+      "matched": "Caerdydd",
+      "file": "gb-wls/_.json"
     },
     {
       "country": "IE",

@@ -1,0 +1,1 @@
+{"name": "United Kingdom", "depth": 0, "count": 2, "shards": [], "top": [["Cardiff", "Cardiff", 51.48, -3.18, 372089, 2653822, ["Caerdydd"]], ["Preston", "Lancashire", 53.7628, -2.7045, 313332, 2639912]], "parts": {"GB-ENG": "England", "GB-WLS": "Wales"}, "regionParts": {"Cardiff": "GB-WLS", "Lancashire": "GB-ENG"}}
