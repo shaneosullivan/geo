@@ -18,7 +18,9 @@ const requests = [];
 function fixtureFetch(url) {
   requests.push(url);
   const file = path.join(conformance, new URL(url).pathname);
-  if (!fs.existsSync(file)) return Promise.resolve({ ok: false, status: 404 });
+  if (!fs.existsSync(file)) {
+    return Promise.resolve({ ok: false, status: 404 });
+  }
   return Promise.resolve({ ok: true, status: 200, json: async () => JSON.parse(fs.readFileSync(file, "utf8")) });
 }
 const geo = createGeo({ baseUrl: "https://geo.test/v1/", fetch: fixtureFetch });
@@ -48,14 +50,20 @@ for (const file of ["geo.min.js", "geo.global.min.js"]) {
       // Copy into this realm: arrays from the vm context have their own Array prototype.
       assert.deepEqual(names([...found]), c.names, `${c.country} ${c.query}`);
     }
-    for (const c of cases.errors) await assert.rejects(g.search(c.country, c.query));
+    for (const c of cases.errors) {
+      await assert.rejects(g.search(c.country, c.query));
+    }
     assert.ok(fs.readFileSync(path.join(dist, file), "utf8").startsWith("// @chofter/geo "), "banner kept");
   });
 }
 
 test("conformance: normalize and fileKey", () => {
-  for (const [input, expected] of cases.normalize) assert.equal(internals.normalize(input), expected, input);
-  for (const [input, expected] of cases.fileKey) assert.equal(internals.fileKey(input), expected, input);
+  for (const [input, expected] of cases.normalize) {
+    assert.equal(internals.normalize(input), expected, input);
+  }
+  for (const [input, expected] of cases.fileKey) {
+    assert.equal(internals.fileKey(input), expected, input);
+  }
   assert.equal(internals.prefixOf("münchen", 2), "mü");
 });
 
@@ -65,7 +73,9 @@ for (const c of cases.search) {
     const before = requests.length;
     const found = await g.search(c.country, c.query, c.limit ? { limit: c.limit } : undefined);
     assert.deepEqual(names(found), c.names);
-    if (found.length) assert.equal(found[0].matched ?? null, c.matched);
+    if (found.length) {
+      assert.equal(found[0].matched ?? null, c.matched);
+    }
     const files = requests.slice(before).map((u) => new URL(u).pathname.replace(/^\/v1\//, ""));
     const index = `${c.country.toLowerCase()}/_.json`;
     assert.equal(files[0], index);

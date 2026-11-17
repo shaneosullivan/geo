@@ -37,9 +37,13 @@ export function prefixOf(key, length) {
 export function fileKey(prefix) {
   let fileName = "";
   for (const character of prefix) {
-    if (/[a-z0-9]/.test(character)) fileName += character;
-    else if (character === " ") fileName += "-";
-    else fileName += "~" + character.codePointAt(0).toString(16);
+    if (/[a-z0-9]/.test(character)) {
+      fileName += character;
+    } else if (character === " ") {
+      fileName += "-";
+    } else {
+      fileName += "~" + character.codePointAt(0).toString(16);
+    }
   }
   return fileName;
 }
@@ -63,10 +67,14 @@ function prepare(records) {
 }
 
 function matchTier(searchKey, query) {
-  if (searchKey === query) return EXACT_MATCH;
+  if (searchKey === query) {
+    return EXACT_MATCH;
+  }
   // A match at the start of the name or of a later word ranks the same, so
   // "york" lists New York City above small towns that merely start with York.
-  if (searchKey.startsWith(query) || searchKey.includes(" " + query)) return PREFIX_MATCH;
+  if (searchKey.startsWith(query) || searchKey.includes(" " + query)) {
+    return PREFIX_MATCH;
+  }
   return NO_MATCH;
 }
 
@@ -98,7 +106,9 @@ export function createGeo(options = {}) {
     if (!pending) {
       pending = fetchFile(`${baseUrl}/${path}`)
         .then((response) => {
-          if (!response.ok) throw new Error(`geo: ${path} returned ${response.status}`);
+          if (!response.ok) {
+            throw new Error(`geo: ${path} returned ${response.status}`);
+          }
           return response.json();
         })
         .then(transform);
@@ -132,7 +142,9 @@ export function createGeo(options = {}) {
       population,
       label: [name, region, country.name].filter(Boolean).join(", "),
     };
-    if (nameIndex > 0) result.matched = place.names[nameIndex];
+    if (nameIndex > 0) {
+      result.matched = place.names[nameIndex];
+    }
     return result;
   }
 
@@ -141,7 +153,9 @@ export function createGeo(options = {}) {
     const longest = Math.min(country.depth, Array.from(query).length);
     for (let length = longest; length > 0; length--) {
       const candidate = fileKey(prefixOf(query, length));
-      if (country.prefixFiles.has(candidate)) return candidate;
+      if (country.prefixFiles.has(candidate)) {
+        return candidate;
+      }
     }
     return null;
   }
@@ -158,14 +172,18 @@ export function createGeo(options = {}) {
     let candidates = country.topPlaces;
     if (country.depth > 0) {
       const prefixFile = prefixFileFor(country, normalizedQuery);
-      if (prefixFile === null) return [];
+      if (prefixFile === null) {
+        return [];
+      }
       candidates = await load(`${country.code.toLowerCase()}/${prefixFile}.json`, prepare);
     }
 
     const matches = [];
     for (const place of candidates) {
       const { tier, nameIndex } = bestMatch(place, normalizedQuery);
-      if (tier !== NO_MATCH) matches.push({ place, tier, nameIndex });
+      if (tier !== NO_MATCH) {
+        matches.push({ place, tier, nameIndex });
+      }
     }
     matches.sort(
       (a, b) => a.tier - b.tier || b.place.record[POPULATION] - a.place.record[POPULATION]

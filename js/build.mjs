@@ -10,7 +10,9 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-if (typeof Bun === "undefined") throw new Error("build.mjs needs Bun for minification: run `bun build.mjs`");
+if (typeof Bun === "undefined") {
+  throw new Error("build.mjs needs Bun for minification: run `bun build.mjs`");
+}
 
 const here = import.meta.dir;
 const out = process.argv[2] ? path.resolve(process.argv[2]) : path.join(here, "dist");
@@ -48,7 +50,9 @@ try {
       target: "browser",
       banner,
     });
-    if (!result.success) throw new AggregateError(result.logs, `bun build failed for ${name}`);
+    if (!result.success) {
+      throw new AggregateError(result.logs, `bun build failed for ${name}`);
+    }
     write(name, await result.outputs[0].text());
   }
 } finally {

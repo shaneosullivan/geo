@@ -45,6 +45,10 @@ also holds the cases every client must pass.
 This repository is mirrored from a private one, so pull requests are applied by
 hand. Issues are welcome.
 
+Code style is checked with [oxlint](https://oxc.rs/docs/guide/usage/linter)
+(`npm run lint` in `js/`, using `.oxlintrc.json`): every `if`, `else`, `for`,
+`while` and `do` body uses braces.
+
 ## Licence
 
 Code: MIT. Data: GeoNames, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/);
