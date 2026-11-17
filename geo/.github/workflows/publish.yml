@@ -1,0 +1,49 @@
+# Publishes to npm whenever main has a package.json version that is not on npm yet.
+# Uses npm trusted publishing (OIDC), so there is no npm token in this repo.
+name: Publish
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write # to push the release tag
+  id-token: write # for npm trusted publishing and provenance
+
+concurrency: publish
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - run: npm install -g npm@latest
+      - run: npm test
+      - name: Check whether this version is already on npm
+        id: check
+        run: |
+          name=$(node -p "require('./package.json').name")
+          version=$(node -p "require('./package.json').version")
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if ! npm view "$name" name >/dev/null 2>&1; then
+            # Trusted publishing can only be set up for a package that exists,
+            # so the very first version is published by hand.
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::$name is not on npm yet. Publish the first version by hand, then add this workflow as a trusted publisher."
+          elif npm view "$name@$version" version >/dev/null 2>&1; then
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+            echo "$name@$version is already published"
+          else
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.check.outputs.publish == 'true'
+        run: npm publish --access public
+      - if: steps.check.outputs.publish == 'true'
+        run: |
+          git tag "v${{ steps.check.outputs.version }}"
+          git push origin "v${{ steps.check.outputs.version }}"
