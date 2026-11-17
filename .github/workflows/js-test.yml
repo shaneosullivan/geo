@@ -34,3 +34,4 @@ jobs:
           node-version: 24
       - run: npm install
       - run: npm run lint
+      - run: npm run format:check

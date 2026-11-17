@@ -48,13 +48,13 @@ Or load the classic script, which adds one global, `choftergeo`:
 Every build is in the npm package and on the CDN (`https://geo.chofter.com/<file>`),
 and npm CDNs such as jsDelivr and unpkg serve the package too.
 
-| File                     | Format                        | Import from npm              | Size (gzip) |
-| ------------------------ | ----------------------------- | ---------------------------- | ----------- |
-| `dist/geo.js`            | ES module, readable           | `@chofter/geo`               | 2.8 KB      |
-| `dist/geo.min.js`        | ES module, minified           | `@chofter/geo/min`           | 1.4 KB      |
-| `dist/geo.global.js`     | classic script, readable      | `@chofter/geo/global`        | 2.8 KB      |
-| `dist/geo.global.min.js` | classic script, minified      | `@chofter/geo/global.min`    | 1.4 KB      |
-| `dist/geo.d.ts`          | TypeScript types (all builds) |                              |             |
+| File                     | Format                        | Import from npm           | Size (gzip) |
+| ------------------------ | ----------------------------- | ------------------------- | ----------- |
+| `dist/geo.js`            | ES module, readable           | `@chofter/geo`            | 2.8 KB      |
+| `dist/geo.min.js`        | ES module, minified           | `@chofter/geo/min`        | 1.4 KB      |
+| `dist/geo.global.js`     | classic script, readable      | `@chofter/geo/global`     | 2.8 KB      |
+| `dist/geo.global.min.js` | classic script, minified      | `@chofter/geo/global.min` | 1.4 KB      |
+| `dist/geo.d.ts`          | TypeScript types (all builds) |                           |             |
 
 Bundlers should use the default `@chofter/geo` entry and minify it themselves.
 The minified files are for loading directly in a page.
@@ -181,8 +181,16 @@ first, largest first.
 
 ```json
 [
-  "York", "York", "York", "York", "York",
-  "New York City", "West New York", "Yorkville", "York Beach", "Yorktown"
+  "York",
+  "York",
+  "York",
+  "York",
+  "York",
+  "New York City",
+  "West New York",
+  "Yorkville",
+  "York Beach",
+  "Yorktown"
 ]
 ```
 
@@ -212,7 +220,7 @@ await geo.countries();
 [
   { "code": "AF", "name": "Afghanistan", "count": 319 },
   { "code": "AX", "name": "Aland Islands", "count": 21 },
-  { "code": "AL", "name": "Albania", "count": 418 }
+  { "code": "AL", "name": "Albania", "count": 418 },
   // … 246 countries in all, sorted by name
 ]
 ```
@@ -223,7 +231,7 @@ await geo.countries();
 
 ```js
 await geo.search("IE", "zzz"); // []
-await geo.search("XX", "a");   // rejects: Error("geo: xx/_.json returned 404")
+await geo.search("XX", "a"); // rejects: Error("geo: xx/_.json returned 404")
 ```
 
 No match is an empty array, not an error. An unknown country code or a network

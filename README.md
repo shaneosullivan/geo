@@ -5,9 +5,9 @@ about 226,000 places in 246 countries from [GeoNames](https://www.geonames.org/)
 served as static JSON files. There is no API and no key. A client works out which
 file holds the answer, fetches it from the CDN and ranks the results itself.
 
-| Language   | Folder        | Package                                                       |
-| ---------- | ------------- | ------------------------------------------------------------- |
-| JavaScript | [`js/`](js/)  | [`@chofter/geo`](https://www.npmjs.com/package/@chofter/geo)  |
+| Language   | Folder       | Package                                                      |
+| ---------- | ------------ | ------------------------------------------------------------ |
+| JavaScript | [`js/`](js/) | [`@chofter/geo`](https://www.npmjs.com/package/@chofter/geo) |
 
 The landing page has sample code for Python, Ruby, Go, C# and Java in the
 meantime.
@@ -47,7 +47,8 @@ hand. Issues are welcome.
 
 Code style is checked with [oxlint](https://oxc.rs/docs/guide/usage/linter)
 (`npm run lint` in `js/`, using `.oxlintrc.json`): every `if`, `else`, `for`,
-`while` and `do` body uses braces.
+`while` and `do` body uses braces. Formatting is
+[oxfmt](https://oxc.rs/docs/guide/usage/formatter) (`npm run format`, using `.oxfmtrc.json`).
 
 ## Licence
 

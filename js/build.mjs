@@ -27,7 +27,7 @@ const write = (name, text) => fs.writeFileSync(path.join(out, name), text);
 write("geo.js", `${banner}\n${source.replace(/^export (?!function createGeo\b)/gm, "")}`);
 write(
   "geo.global.js",
-  `${banner}\n(function () {\n"use strict";\n${source.replace(/^export /gm, "")}\nglobalThis.choftergeo = { createGeo };\n})();\n`
+  `${banner}\n(function () {\n"use strict";\n${source.replace(/^export /gm, "")}\nglobalThis.choftergeo = { createGeo };\n})();\n`,
 );
 write("geo.d.ts", fs.readFileSync(path.join(here, "src/geo.d.ts"), "utf8"));
 
@@ -36,8 +36,14 @@ write("geo.d.ts", fs.readFileSync(path.join(here, "src/geo.d.ts"), "utf8"));
 // the entry itself and tree-shakes the whole library away.
 const entries = fs.mkdtempSync(path.join(os.tmpdir(), "chofter-geo-"));
 const src = JSON.stringify(path.join(here, "src/geo.js"));
-fs.writeFileSync(path.join(entries, "module.js"), `import { createGeo } from ${src};\nexport { createGeo };\n`);
-fs.writeFileSync(path.join(entries, "global.js"), `import { createGeo } from ${src};\nglobalThis.choftergeo = { createGeo };\n`);
+fs.writeFileSync(
+  path.join(entries, "module.js"),
+  `import { createGeo } from ${src};\nexport { createGeo };\n`,
+);
+fs.writeFileSync(
+  path.join(entries, "global.js"),
+  `import { createGeo } from ${src};\nglobalThis.choftergeo = { createGeo };\n`,
+);
 try {
   for (const [entry, format, name] of [
     ["module.js", "esm", "geo.min.js"],

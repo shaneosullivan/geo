@@ -10,7 +10,16 @@
 // places starting with s, while "sa" or "san" hold everything for that prefix.
 
 const LETTER_FOLDS = {
-  ß: "ss", æ: "ae", œ: "oe", ø: "o", đ: "d", ð: "d", þ: "th", ł: "l", ı: "i", ħ: "h",
+  ß: "ss",
+  æ: "ae",
+  œ: "oe",
+  ø: "o",
+  đ: "d",
+  ð: "d",
+  þ: "th",
+  ł: "l",
+  ı: "i",
+  ħ: "h",
 };
 
 // normalize, prefixOf and fileKey are exported only so the data build can share
@@ -186,17 +195,15 @@ export function createGeo(options = {}) {
       }
     }
     matches.sort(
-      (a, b) => a.tier - b.tier || b.place.record[POPULATION] - a.place.record[POPULATION]
+      (a, b) => a.tier - b.tier || b.place.record[POPULATION] - a.place.record[POPULATION],
     );
-    return matches
-      .slice(0, limit)
-      .map((match) => toResult(country, match.place, match.nameIndex));
+    return matches.slice(0, limit).map((match) => toResult(country, match.place, match.nameIndex));
   }
 
   /** Countries that have data: [{ code, name, count }]. */
   function countries() {
     return load("countries.json", (rows) =>
-      rows.map(([code, name, count]) => ({ code, name, count }))
+      rows.map(([code, name, count]) => ({ code, name, count })),
     );
   }
 

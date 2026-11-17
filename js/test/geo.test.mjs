@@ -21,7 +21,11 @@ function fixtureFetch(url) {
   if (!fs.existsSync(file)) {
     return Promise.resolve({ ok: false, status: 404 });
   }
-  return Promise.resolve({ ok: true, status: 200, json: async () => JSON.parse(fs.readFileSync(file, "utf8")) });
+  return Promise.resolve({
+    ok: true,
+    status: 200,
+    json: async () => JSON.parse(fs.readFileSync(file, "utf8")),
+  });
 }
 const geo = createGeo({ baseUrl: "https://geo.test/v1/", fetch: fixtureFetch });
 const names = (list) => list.map((p) => p.name);
@@ -39,7 +43,10 @@ for (const file of ["geo.min.js", "geo.global.min.js"]) {
     if (file.includes("global")) {
       const context = vm.createContext({ fetch: fixtureFetch });
       vm.runInContext(fs.readFileSync(path.join(dist, file), "utf8"), context);
-      assert.deepEqual(Object.keys(context).filter((k) => k !== "fetch"), ["choftergeo"]);
+      assert.deepEqual(
+        Object.keys(context).filter((k) => k !== "fetch"),
+        ["choftergeo"],
+      );
       make = context.choftergeo.createGeo;
     } else {
       make = (await import(path.join(dist, file))).createGeo;
@@ -53,7 +60,10 @@ for (const file of ["geo.min.js", "geo.global.min.js"]) {
     for (const c of cases.errors) {
       await assert.rejects(g.search(c.country, c.query));
     }
-    assert.ok(fs.readFileSync(path.join(dist, file), "utf8").startsWith("// @chofter/geo "), "banner kept");
+    assert.ok(
+      fs.readFileSync(path.join(dist, file), "utf8").startsWith("// @chofter/geo "),
+      "banner kept",
+    );
   });
 }
 
@@ -132,7 +142,10 @@ test("baseUrl defaults to geo.chofter.com", async () => {
 test("classic script exposes a single global with createGeo", async () => {
   const context = vm.createContext({ fetch: fixtureFetch });
   vm.runInContext(fs.readFileSync(path.join(dist, "geo.global.js"), "utf8"), context);
-  assert.deepEqual(Object.keys(context).filter((k) => k !== "fetch"), ["choftergeo"]);
+  assert.deepEqual(
+    Object.keys(context).filter((k) => k !== "fetch"),
+    ["choftergeo"],
+  );
   assert.deepEqual(Object.keys(context.choftergeo), ["createGeo"]);
   const g = context.choftergeo.createGeo({ baseUrl: "https://geo.test/v1" });
   assert.equal((await g.search("IE", "cork"))[0].name, "Cork");
