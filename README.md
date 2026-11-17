@@ -1,7 +1,7 @@
 # geo
 
 Town and city search clients for [geo.chofter.com](https://geo.chofter.com):
-about 226,000 places in 246 countries from [GeoNames](https://www.geonames.org/),
+about 237,000 places in 246 countries from [GeoNames](https://www.geonames.org/),
 served as static JSON files. There is no API and no key. A client works out which
 file holds the answer, fetches it from the CDN and ranks the results itself.
 
@@ -23,7 +23,7 @@ Everything is relative to the base URL, `https://geo.chofter.com/v1`.
   lowercase ISO 3166-1 alpha-2 code, or a nation's code such as `gb-eng`. For
   a small country `depth` is 0, `shards` is empty and `top` holds every place.
 - `{cc}/{key}.json`: an array of places for one prefix.
-- A place is `[name, region, lat, lng, population, geonameId, altNames?, district?, localName?]`.
+- A place is `[name, region, lat, lng, population, geonameId, altNames?, district?, localName?, city?]`.
   Trailing items are left out, and one that is missing before a present one is
   `[]` (`altNames`) or `""`.
   - `district` (a county or district) is there only when another place in the
@@ -32,6 +32,9 @@ Everything is relative to the base URL, `https://geo.chofter.com/v1`.
   - `localName` is the name in the country's first official language, such as
     "서울" for Seoul, when that language is not English and the name differs
     from `name`. It is searchable like an alternate name.
+  - `city` is set for a suburb: the city it is part of. Show it after the
+    name, as in "Leichhardt, Sydney, New South Wales, Australia". The label is
+    `name`, `city`, `district`, `region` and the country, leaving out empty ones.
 - In Ireland a place's region is its county, and in the UK its council area.
 - `gb/_.json` holds the whole UK. It also has `parts`, each nation's code and
   name, and `regionParts`, the nation of each region, so a search of `GB` can

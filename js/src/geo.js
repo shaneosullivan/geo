@@ -58,11 +58,12 @@ export function fileKey(prefix) {
 }
 
 // A place in the JSON files is an array:
-//   [name, region, lat, lng, population, id, altNames?, district?, localName?]
+//   [name, region, lat, lng, population, id, altNames?, district?, localName?, city?]
 // `district` is set only when another place in the country has the same name and
 // region. `localName` is the name in the country's own language, when that is not
-// English and differs from `name`. Trailing items are left out; one that is
-// missing before a present one is [] (altNames) or "".
+// English and differs from `name`. `city` is the city a suburb is part of.
+// Trailing items are left out; one that is missing before a present one is []
+// (altNames) or "".
 const NAME = 0;
 const POPULATION = 4;
 const ALT_NAMES = 6;
@@ -157,7 +158,7 @@ export function createGeo(options = {}) {
   }
 
   function toResult(country, place, nameIndex) {
-    const [name, region, lat, lng, population, id, , district, localName] = place.record;
+    const [name, region, lat, lng, population, id, , district, localName, city] = place.record;
     const { code, name: countryName } = countryOf(country, region);
     const result = {
       id,
@@ -168,8 +169,11 @@ export function createGeo(options = {}) {
       lat,
       lng,
       population,
-      label: [name, district, region, countryName].filter(Boolean).join(", "),
+      label: [name, city, district, region, countryName].filter(Boolean).join(", "),
     };
+    if (city) {
+      result.city = city;
+    }
     if (district) {
       result.district = district;
     }

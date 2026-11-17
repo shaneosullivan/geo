@@ -6,7 +6,7 @@ no API and no key. The data is served as static JSON files from
 [GeoNames](https://www.geonames.org/). The client works out which file holds the
 answer, fetches it from the CDN and ranks the results locally.
 
-- About 226,000 towns and cities in 246 countries, with coordinates.
+- About 237,000 towns, cities and suburbs in 246 countries, with coordinates.
 - One small request per keystroke at most, often none (files are cached).
 - About 1.4 KB minified and gzipped. Works in browsers, Node 18+, Deno, Bun, Workers and React Native.
 
@@ -82,8 +82,8 @@ Returns an object with:
 UK one of its nations (`"GB-ENG"`, `"GB-SCT"`, `"GB-WLS"`, `"GB-NIR"`) or `"GB"`
 for all four.
 Results include `matched` when the query matched an alternate name,
-`district` when another place in the country has the same name and region, and
-`localName` when the country's own language has a different name for the place.
+`district` when another place in the country has the same name and region,
+`city` when the place is a suburb (the city it is part of), and `localName` when the country's own language has a different name for the place.
 
 ## Examples
 
@@ -212,6 +212,20 @@ includes it:
   "Plantation, Monroe County, Florida, United States"
 ]
 ```
+
+Suburbs are included, and their label names their city, in `city`:
+
+```js
+(await geo.search("AU", "leichhardt")).map((p) => p.label);
+```
+
+```json
+["Leichhardt, Sydney, New South Wales, Australia", "Leichhardt, Queensland, Australia"]
+```
+
+A suburb's city is the large city nearby with the strongest pull (population
+divided by distance squared). A suburb with no large city nearby, like the
+Leichhardt near Ipswich, has no `city`.
 
 So `label` tells namesakes apart in nearly every case. A few small places share
 their name, region and district too; use `lat` and `lng` (or `id`) for those.

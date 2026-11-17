@@ -13,6 +13,11 @@ export interface Place {
    */
   district?: string;
   /**
+   * For a suburb, the city it is part of, such as "Sydney" for Leichhardt. Absent
+   * for towns and cities, and for suburbs with no large city nearby.
+   */
+  city?: string;
+  /**
    * The name in the country's own language, such as "서울" for Seoul or "München"
    * for Munich. Absent when that language is English, GeoNames has no name in
    * it, or it is the same as `name`.
@@ -27,7 +32,10 @@ export interface Place {
   lat: number;
   lng: number;
   population: number;
-  /** "Name, Region, Country", or "Name, District, Region, Country" when `district` is set. */
+  /**
+   * "Name, Region, Country", with `city` and `district` after the name when set:
+   * "Leichhardt, Sydney, New South Wales, Australia".
+   */
   label: string;
   /** Set when the query matched an alternate name rather than `name`. */
   matched?: string;

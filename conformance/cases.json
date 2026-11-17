@@ -59,6 +59,17 @@
       "file": "us/_.json"
     },
     {
+      "country": "AU",
+      "query": "leichhardt",
+      "names": ["Leichhardt", "Leichhardt"],
+      "labels": [
+        "Leichhardt, Sydney, New South Wales, Australia",
+        "Leichhardt, Queensland, Australia"
+      ],
+      "matched": null,
+      "file": "au/_.json"
+    },
+    {
       "country": "GB",
       "query": "",
       "names": ["Cardiff", "Preston"],

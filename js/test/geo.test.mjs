@@ -132,6 +132,12 @@ test("result shape", async () => {
   assert.equal(munich.localName, "München");
   assert.equal("district" in munich, false);
   assert.equal(munich.label, "Munich, Bavaria, Germany");
+  assert.equal("city" in munich, false);
+  // A suburb's row ends with its city.
+  const [leichhardt] = await geo.search("AU", "leichhardt");
+  assert.equal(leichhardt.city, "Sydney");
+  assert.equal("district" in leichhardt, false);
+  assert.equal("localName" in leichhardt, false);
   // "GB" covers the UK's nations: each result has its own nation as its country.
   const uk = await geo.search("GB", "");
   assert.deepEqual(
@@ -148,6 +154,7 @@ test("result shape", async () => {
 
 test("countries and preload", async () => {
   assert.deepEqual(await geo.countries(), [
+    { code: "AU", name: "Australia", count: 3 },
     { code: "GB-ENG", name: "England", count: 1, altNames: ["United Kingdom", "UK"] },
     { code: "DE", name: "Germany", count: 7 },
     { code: "IE", name: "Ireland", count: 6 },
