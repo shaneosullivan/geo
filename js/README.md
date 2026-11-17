@@ -65,6 +65,154 @@ Returns an object with:
 `countryCode` is an ISO 3166-1 alpha-2 code such as `"US"` or `"ie"`.
 Results include `matched` when the query matched an alternate name.
 
+## Examples
+
+These are real results from the live data. Long ones are cut down to the
+fields that matter, with `// …` marking what was left out.
+
+### A full result
+
+```js
+await geo.search("IE", "dub", { limit: 3 });
+```
+
+```json
+[
+  {
+    "id": 2964574,
+    "name": "Dublin",
+    "region": "Leinster",
+    "country": "Ireland",
+    "countryCode": "IE",
+    "lat": 53.3331,
+    "lng": -6.2489,
+    "population": 1024027,
+    "label": "Dublin, Leinster, Ireland"
+  },
+  {
+    "id": 2964690,
+    "name": "Douglas",
+    "region": "Munster",
+    "country": "Ireland",
+    "countryCode": "IE",
+    "lat": 51.8744,
+    "lng": -8.435,
+    "population": 26883,
+    "label": "Douglas, Munster, Ireland",
+    "matched": "Dúbhglas"
+  },
+  {
+    "id": 2966131,
+    "name": "Blackrock",
+    "region": "Leinster",
+    "country": "Ireland",
+    "countryCode": "IE",
+    "lat": 53.3015,
+    "lng": -6.1778,
+    "population": 8821,
+    "label": "Blackrock, Leinster, Ireland",
+    "matched": "Carraig Dubh"
+  }
+]
+```
+
+`id` is the GeoNames id. `label` is ready to display. Douglas and Blackrock are
+found by their Irish names, so `matched` says which name was hit. You might show
+it as "Douglas (Dúbhglas)".
+
+### Local spellings and other scripts
+
+```js
+await geo.search("DE", "München", { limit: 2 });
+await geo.search("RU", "Москва", { limit: 1 });
+```
+
+```jsonc
+[
+  { "name": "Munich", "label": "Munich, Bavaria, Germany", "lat": 48.1374, "lng": 11.5755, "matched": "München" /* … */ },
+  { "name": "Münchenbernsdorf", "label": "Münchenbernsdorf, Thuringia, Germany" /* … */ }
+]
+[
+  { "name": "Moscow", "label": "Moscow, Moscow, Russia", "lat": 55.752, "lng": 37.6178, "matched": "Москва" /* … */ }
+]
+```
+
+Accents are optional: `"munchen"` and `"sao pau"` work just as well.
+
+### Same name, different places
+
+```js
+(await geo.search("US", "springfield", { limit: 4 })).map((p) => p.label);
+```
+
+```json
+[
+  "Springfield, Missouri, United States",
+  "Springfield, Massachusetts, United States",
+  "Springfield, Illinois, United States",
+  "Springfield, Oregon, United States"
+]
+```
+
+Use `region`, `lat` and `lng` (or `id`) to tell them apart. Exact matches come
+first, largest first.
+
+### Ranking: exact names, then prefixes and later words
+
+```js
+(await geo.search("US", "york")).map((p) => p.name);
+```
+
+```json
+[
+  "York", "York", "York", "York", "York",
+  "New York City", "West New York", "Yorkville", "York Beach", "Yorktown"
+]
+```
+
+The five towns called exactly "York" rank first. After them come names that
+start with "york", or that have a later word starting with it, ordered by
+population. That's how New York City appears.
+
+### An empty query
+
+```js
+(await geo.search("FR", "", { limit: 5 })).map((p) => p.name);
+```
+
+```json
+["Paris", "Marseille", "Lyon", "Toulouse", "Nice"]
+```
+
+The country's largest places, which are handy to show before the user types.
+
+### Countries
+
+```js
+await geo.countries();
+```
+
+```jsonc
+[
+  { "code": "AF", "name": "Afghanistan", "count": 319 },
+  { "code": "AX", "name": "Aland Islands", "count": 21 },
+  { "code": "AL", "name": "Albania", "count": 418 }
+  // … 246 countries in all, sorted by name
+]
+```
+
+`count` is the number of places in that country.
+
+### No match and errors
+
+```js
+await geo.search("IE", "zzz"); // []
+await geo.search("XX", "a");   // rejects: Error("geo: xx/_.json returned 404")
+```
+
+No match is an empty array, not an error. An unknown country code or a network
+failure rejects, and the failed file is fetched again on the next call.
+
 ## How it works
 
 Each country has an index file, `/v1/{cc}/_.json`, that lists its prefix files.
