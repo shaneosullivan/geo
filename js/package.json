@@ -26,18 +26,23 @@
       "types": "./dist/geo.d.ts",
       "default": "./dist/geo.js"
     },
+    "./min": {
+      "types": "./dist/geo.d.ts",
+      "default": "./dist/geo.min.js"
+    },
     "./global": "./dist/geo.global.js",
+    "./global.min": "./dist/geo.global.min.js",
     "./package.json": "./package.json"
   },
   "types": "./dist/geo.d.ts",
-  "unpkg": "./dist/geo.global.js",
-  "jsdelivr": "./dist/geo.global.js",
+  "unpkg": "./dist/geo.global.min.js",
+  "jsdelivr": "./dist/geo.global.min.js",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "node build.mjs",
-    "test": "node build.mjs && node --test",
+    "build": "bun build.mjs",
+    "test": "bun build.mjs && node --test",
     "prepublishOnly": "npm test"
   },
   "engines": {

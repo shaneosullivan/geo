@@ -8,7 +8,7 @@ answer, fetches it from the CDN and ranks the results locally.
 
 - About 226,000 towns and cities in 246 countries, with coordinates.
 - One small request per keystroke at most, often none (files are cached).
-- About 2.5 KB gzipped. Works in browsers, Node 18+, Deno, Bun, Workers and React Native.
+- About 1.3 KB minified and gzipped. Works in browsers, Node 18+, Deno, Bun, Workers and React Native.
 
 ## Install
 
@@ -37,11 +37,27 @@ Without a bundler, import it straight from the CDN:
 Or load the classic script, which adds one global, `choftergeo`:
 
 ```html
-<script src="https://geo.chofter.com/geo.global.js"></script>
+<script src="https://geo.chofter.com/geo.global.min.js"></script>
 <script>
   const geo = choftergeo.createGeo();
 </script>
 ```
+
+### Files
+
+Every build is in the npm package and on the CDN (`https://geo.chofter.com/<file>`),
+and npm CDNs such as jsDelivr and unpkg serve the package too.
+
+| File                     | Format                        | Import from npm              | Size (gzip) |
+| ------------------------ | ----------------------------- | ---------------------------- | ----------- |
+| `dist/geo.js`            | ES module, readable           | `@chofter/geo`               | 2.4 KB      |
+| `dist/geo.min.js`        | ES module, minified           | `@chofter/geo/min`           | 1.3 KB      |
+| `dist/geo.global.js`     | classic script, readable      | `@chofter/geo/global`        | 2.4 KB      |
+| `dist/geo.global.min.js` | classic script, minified      | `@chofter/geo/global.min`    | 1.3 KB      |
+| `dist/geo.d.ts`          | TypeScript types (all builds) |                              |             |
+
+Bundlers should use the default `@chofter/geo` entry and minify it themselves.
+The minified files are for loading directly in a page.
 
 ## API
 

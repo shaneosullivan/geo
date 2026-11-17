@@ -26,6 +26,7 @@ jobs:
         with:
           node-version: 24
           registry-url: https://registry.npmjs.org
+      - uses: oven-sh/setup-bun@v2
       - run: npm install -g npm@latest
       - run: npm test
       - name: Check whether this version is already on npm

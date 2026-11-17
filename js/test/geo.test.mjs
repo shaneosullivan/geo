@@ -24,9 +24,34 @@ function fixtureFetch(url) {
 const geo = createGeo({ baseUrl: "https://geo.test/v1/", fetch: fixtureFetch });
 const names = (list) => list.map((p) => p.name);
 
-test("the module exports only createGeo", async () => {
-  assert.deepEqual(Object.keys(await import(path.join(dist, "geo.js"))), ["createGeo"]);
+test("the modules export only createGeo", async () => {
+  for (const file of ["geo.js", "geo.min.js"]) {
+    assert.deepEqual(Object.keys(await import(path.join(dist, file))), ["createGeo"], file);
+  }
 });
+
+// The minified builds must behave exactly like the readable ones.
+for (const file of ["geo.min.js", "geo.global.min.js"]) {
+  test(`conformance: ${file}`, async () => {
+    let make;
+    if (file.includes("global")) {
+      const context = vm.createContext({ fetch: fixtureFetch });
+      vm.runInContext(fs.readFileSync(path.join(dist, file), "utf8"), context);
+      assert.deepEqual(Object.keys(context).filter((k) => k !== "fetch"), ["choftergeo"]);
+      make = context.choftergeo.createGeo;
+    } else {
+      make = (await import(path.join(dist, file))).createGeo;
+    }
+    const g = make({ baseUrl: "https://geo.test/v1", fetch: fixtureFetch });
+    for (const c of cases.search) {
+      const found = await g.search(c.country, c.query, c.limit ? { limit: c.limit } : undefined);
+      // Copy into this realm: arrays from the vm context have their own Array prototype.
+      assert.deepEqual(names([...found]), c.names, `${c.country} ${c.query}`);
+    }
+    for (const c of cases.errors) await assert.rejects(g.search(c.country, c.query));
+    assert.ok(fs.readFileSync(path.join(dist, file), "utf8").startsWith("// @chofter/geo "), "banner kept");
+  });
+}
 
 test("conformance: normalize and fileKey", () => {
   for (const [input, expected] of cases.normalize) assert.equal(internals.normalize(input), expected, input);
