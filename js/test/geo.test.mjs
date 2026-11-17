@@ -56,6 +56,12 @@ for (const file of ["geo.min.js", "geo.global.min.js"]) {
       const found = await g.search(c.country, c.query, c.limit ? { limit: c.limit } : undefined);
       // Copy into this realm: arrays from the vm context have their own Array prototype.
       assert.deepEqual(names([...found]), c.names, `${c.country} ${c.query}`);
+      if (c.labels) {
+        assert.deepEqual(
+          [...found].map((p) => p.label),
+          c.labels,
+        );
+      }
     }
     for (const c of cases.errors) {
       await assert.rejects(g.search(c.country, c.query));
@@ -83,6 +89,12 @@ for (const c of cases.search) {
     const before = requests.length;
     const found = await g.search(c.country, c.query, c.limit ? { limit: c.limit } : undefined);
     assert.deepEqual(names(found), c.names);
+    if (c.labels) {
+      assert.deepEqual(
+        found.map((p) => p.label),
+        c.labels,
+      );
+    }
     if (found.length) {
       assert.equal(found[0].matched ?? null, c.matched);
     }
@@ -120,7 +132,7 @@ test("result shape", async () => {
 test("countries and preload", async () => {
   assert.deepEqual(await geo.countries(), [
     { code: "DE", name: "Germany", count: 7 },
-    { code: "IE", name: "Ireland", count: 4 },
+    { code: "IE", name: "Ireland", count: 6 },
   ]);
   await geo.preload("IE");
 });

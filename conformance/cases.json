@@ -39,6 +39,17 @@
     },
     {
       "country": "IE",
+      "query": "blackrock",
+      "names": ["Blackrock", "Blackrock"],
+      "labels": [
+        "Blackrock, Dún Laoghaire-Rathdown, Leinster, Ireland",
+        "Blackrock, Louth, Leinster, Ireland"
+      ],
+      "matched": null,
+      "file": "ie/_.json"
+    },
+    {
+      "country": "IE",
       "query": "baile atha",
       "names": ["Dublin"],
       "matched": "Baile Átha Cliath",

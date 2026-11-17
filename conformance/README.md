@@ -12,7 +12,8 @@ base URL, then check
 - `fileKey`: `[prefix, expected]`. `a-z` and `0-9` stay, a space becomes `-`,
   anything else becomes `~` plus its code point in lowercase hex.
 - `search`: the result names in order (`limit` defaults to 10), the first
-  result's `matched` alternate name, and the data file that answers the query
+  result's `matched` alternate name, the result labels in order where a case
+  gives `labels`, and the data file that answers the query
   (`null` when no file is listed, so the client returns nothing without a request).
 - `errors`: searches that must fail.
 

@@ -58,7 +58,9 @@ export function fileKey(prefix) {
 }
 
 // A place in the JSON files is an array:
-//   [name, region, lat, lng, population, id, altNames?]
+//   [name, region, lat, lng, population, id, altNames?, district?]
+// `district` is present only when another place in the country has the same
+// name and region; altNames is then [] if the place has none.
 const NAME = 0;
 const POPULATION = 4;
 const ALT_NAMES = 6;
@@ -139,7 +141,7 @@ export function createGeo(options = {}) {
   }
 
   function toResult(country, place, nameIndex) {
-    const [name, region, lat, lng, population, id] = place.record;
+    const [name, region, lat, lng, population, id, , district] = place.record;
     const result = {
       id,
       name,
@@ -149,8 +151,11 @@ export function createGeo(options = {}) {
       lat,
       lng,
       population,
-      label: [name, region, country.name].filter(Boolean).join(", "),
+      label: [name, district, region, country.name].filter(Boolean).join(", "),
     };
+    if (district) {
+      result.district = district;
+    }
     if (nameIndex > 0) {
       result.matched = place.names[nameIndex];
     }

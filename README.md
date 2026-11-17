@@ -21,7 +21,10 @@ Everything is relative to the base URL, `https://geo.chofter.com/v1`.
   lowercase ISO 3166-1 alpha-2 code. For a small country `depth` is 0, `shards`
   is empty and `top` holds every place.
 - `{cc}/{key}.json`: an array of places for one prefix.
-- A place is `[name, region, lat, lng, population, geonameId, altNames?]`.
+- A place is `[name, region, lat, lng, population, geonameId, altNames?, district?]`.
+  `district` (a county or district) is there only when another place in the
+  country has the same name and region; `altNames` is then `[]` if there are
+  none. Show it in the label, as in "Blackrock, Louth, Leinster, Ireland".
 
 ## Search algorithm
 

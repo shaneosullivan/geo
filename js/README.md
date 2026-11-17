@@ -79,7 +79,8 @@ Returns an object with:
   the user picks a country.
 
 `countryCode` is an ISO 3166-1 alpha-2 code such as `"US"` or `"ie"`.
-Results include `matched` when the query matched an alternate name.
+Results include `matched` when the query matched an alternate name, and
+`district` when another place in the country has the same name and region.
 
 ## Examples
 
@@ -126,7 +127,8 @@ await geo.search("IE", "dub", { limit: 3 });
     "lat": 53.3015,
     "lng": -6.1778,
     "population": 8821,
-    "label": "Blackrock, Leinster, Ireland",
+    "label": "Blackrock, Dún Laoghaire-Rathdown, Leinster, Ireland",
+    "district": "Dún Laoghaire-Rathdown",
     "matched": "Carraig Dubh"
   }
 ]
@@ -134,7 +136,8 @@ await geo.search("IE", "dub", { limit: 3 });
 
 `id` is the GeoNames id. `label` is ready to display. Douglas and Blackrock are
 found by their Irish names, so `matched` says which name was hit. You might show
-it as "Douglas (Dúbhglas)".
+it as "Douglas (Dúbhglas)". Blackrock has a `district` because there is another
+Blackrock in Leinster (see below).
 
 ### Local spellings and other scripts
 
@@ -170,8 +173,29 @@ Accents are optional: `"munchen"` and `"sao pau"` work just as well.
 ]
 ```
 
-Use `region`, `lat` and `lng` (or `id`) to tell them apart. Exact matches come
-first, largest first.
+Exact matches come first, largest first. When two places share a name and a
+region, they also get a `district` (a county or district), and the label
+includes it:
+
+```js
+(await geo.search("US", "plantation", { limit: 3 })).map((p) => p.label);
+(await geo.search("IE", "blackrock", { limit: 2 })).map((p) => p.label);
+```
+
+```json
+[
+  "Plantation, Broward County, Florida, United States",
+  "Plantation, Sarasota County, Florida, United States",
+  "Plantation, Monroe County, Florida, United States"
+]
+[
+  "Blackrock, Dún Laoghaire-Rathdown, Leinster, Ireland",
+  "Blackrock, Louth, Leinster, Ireland"
+]
+```
+
+So `label` tells namesakes apart in nearly every case. A few small places share
+their name, region and district too; use `lat` and `lng` (or `id`) for those.
 
 ### Ranking: exact names, then prefixes and later words
 

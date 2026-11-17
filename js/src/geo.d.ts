@@ -4,12 +4,17 @@ export interface Place {
   name: string;
   /** First-level admin division (state, province, county), may be empty. */
   region: string;
+  /**
+   * Second-level admin division (county, district), set only when another place
+   * in the country has the same name and region.
+   */
+  district?: string;
   country: string;
   countryCode: string;
   lat: number;
   lng: number;
   population: number;
-  /** "Name, Region, Country". */
+  /** "Name, Region, Country", or "Name, District, Region, Country" when `district` is set. */
   label: string;
   /** Set when the query matched an alternate name rather than `name`. */
   matched?: string;
