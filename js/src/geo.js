@@ -58,12 +58,15 @@ export function fileKey(prefix) {
 }
 
 // A place in the JSON files is an array:
-//   [name, region, lat, lng, population, id, altNames?, district?]
-// `district` is present only when another place in the country has the same
-// name and region; altNames is then [] if the place has none.
+//   [name, region, lat, lng, population, id, altNames?, district?, localName?]
+// `district` is set only when another place in the country has the same name and
+// region. `localName` is the name in the country's own language, when that is not
+// English and differs from `name`. Trailing items are left out; one that is
+// missing before a present one is [] (altNames) or "".
 const NAME = 0;
 const POPULATION = 4;
 const ALT_NAMES = 6;
+const LOCAL_NAME = 8;
 
 const EXACT_MATCH = 0;
 const PREFIX_MATCH = 1;
@@ -73,6 +76,9 @@ const NO_MATCH = -1;
 function prepare(records) {
   return records.map((record) => {
     const names = [record[NAME], ...(record[ALT_NAMES] || [])];
+    if (record[LOCAL_NAME]) {
+      names.push(record[LOCAL_NAME]);
+    }
     return { record, names, searchKeys: names.map(normalize) };
   });
 }
@@ -141,7 +147,7 @@ export function createGeo(options = {}) {
   }
 
   function toResult(country, place, nameIndex) {
-    const [name, region, lat, lng, population, id, , district] = place.record;
+    const [name, region, lat, lng, population, id, , district, localName] = place.record;
     const result = {
       id,
       name,
@@ -155,6 +161,9 @@ export function createGeo(options = {}) {
     };
     if (district) {
       result.district = district;
+    }
+    if (localName) {
+      result.localName = localName;
     }
     if (nameIndex > 0) {
       result.matched = place.names[nameIndex];

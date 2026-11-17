@@ -21,10 +21,15 @@ Everything is relative to the base URL, `https://geo.chofter.com/v1`.
   lowercase ISO 3166-1 alpha-2 code. For a small country `depth` is 0, `shards`
   is empty and `top` holds every place.
 - `{cc}/{key}.json`: an array of places for one prefix.
-- A place is `[name, region, lat, lng, population, geonameId, altNames?, district?]`.
-  `district` (a county or district) is there only when another place in the
-  country has the same name and region; `altNames` is then `[]` if there are
-  none. Show it in the label, as in "Blackrock, Louth, Leinster, Ireland".
+- A place is `[name, region, lat, lng, population, geonameId, altNames?, district?, localName?]`.
+  Trailing items are left out, and one that is missing before a present one is
+  `[]` (`altNames`) or `""`.
+  - `district` (a county or district) is there only when another place in the
+    country has the same name and region. Show it in the label, as in
+    "Blackrock, Louth, Leinster, Ireland".
+  - `localName` is the name in the country's first official language, such as
+    "서울" for Seoul, when that language is not English and the name differs
+    from `name`. It is searchable like an alternate name.
 
 ## Search algorithm
 
@@ -33,7 +38,8 @@ Everything is relative to the base URL, `https://geo.chofter.com/v1`.
    `min(depth, length of q in code points)` down to 1, take the first `n` code
    points of `q`; the first whose `fileKey` is in `shards` names the file to
    fetch. If none is listed, return nothing.
-3. A candidate matches if `normalize` of its name or an alternate name equals
+3. A candidate matches if `normalize` of its name, an alternate name or its
+   `localName` equals
    `q` (tier 0), or starts with `q` or contains `" " + q` (tier 1). Use the best
    tier over all its names, and remember which name gave it.
 4. Sort by tier, then by population descending (a stable sort), and return the

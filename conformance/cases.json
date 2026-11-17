@@ -89,6 +89,7 @@
       "query": "München",
       "names": ["Munich"],
       "matched": "München",
+      "localName": "München",
       "file": "de/mu.json"
     },
     {

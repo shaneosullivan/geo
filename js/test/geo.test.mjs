@@ -98,6 +98,9 @@ for (const c of cases.search) {
     if (found.length) {
       assert.equal(found[0].matched ?? null, c.matched);
     }
+    if (c.localName) {
+      assert.equal(found[0].localName, c.localName);
+    }
     const files = requests.slice(before).map((u) => new URL(u).pathname.replace(/^\/v1\//, ""));
     const index = `${c.country.toLowerCase()}/_.json`;
     assert.equal(files[0], index);
@@ -124,6 +127,11 @@ test("result shape", async () => {
     population: 1024027,
     label: "Dublin, Leinster, Ireland",
   });
+  // Munich's row is [..., [], "", "München"]: the empty placeholders add nothing.
+  const [munich] = await geo.search("DE", "munich");
+  assert.equal(munich.localName, "München");
+  assert.equal("district" in munich, false);
+  assert.equal(munich.label, "Munich, Bavaria, Germany");
   const before = requests.length;
   await geo.search("ie", "cork");
   assert.equal(requests.length, before, "a second search in a small country needs no fetch");

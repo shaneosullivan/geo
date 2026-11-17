@@ -9,6 +9,12 @@ export interface Place {
    * in the country has the same name and region.
    */
   district?: string;
+  /**
+   * The name in the country's own language, such as "서울" for Seoul or "München"
+   * for Munich. Absent when that language is English, GeoNames has no name in
+   * it, or it is the same as `name`.
+   */
+  localName?: string;
   country: string;
   countryCode: string;
   lat: number;

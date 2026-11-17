@@ -79,8 +79,9 @@ Returns an object with:
   the user picks a country.
 
 `countryCode` is an ISO 3166-1 alpha-2 code such as `"US"` or `"ie"`.
-Results include `matched` when the query matched an alternate name, and
-`district` when another place in the country has the same name and region.
+Results include `matched` when the query matched an alternate name,
+`district` when another place in the country has the same name and region, and
+`localName` when the country's own language has a different name for the place.
 
 ## Examples
 
@@ -148,15 +149,38 @@ await geo.search("RU", "Москва", { limit: 1 });
 
 ```jsonc
 [
-  { "name": "Munich", "label": "Munich, Bavaria, Germany", "lat": 48.1374, "lng": 11.5755, "matched": "München" /* … */ },
+  { "name": "Munich", "label": "Munich, Bavaria, Germany", "localName": "München", "matched": "München" /* … */ },
   { "name": "Münchenbernsdorf", "label": "Münchenbernsdorf, Thuringia, Germany" /* … */ }
 ]
 [
-  { "name": "Moscow", "label": "Moscow, Moscow, Russia", "lat": 55.752, "lng": 37.6178, "matched": "Москва" /* … */ }
+  { "name": "Moscow", "label": "Moscow, Moscow, Russia", "localName": "Москва", "matched": "Москва" /* … */ }
 ]
 ```
 
 Accents are optional: `"munchen"` and `"sao pau"` work just as well.
+
+### Local names
+
+`name` is in English where English has its own name for the place, and
+otherwise in the local spelling in Latin letters. `localName` gives the name in
+the country's own language, whatever you searched for:
+
+```js
+(await geo.search("KR", "", { limit: 3 })).map((p) => [p.name, p.localName]);
+```
+
+```json
+[
+  ["Seoul", "서울"],
+  ["Busan", "부산"],
+  ["Incheon", "인천"]
+]
+```
+
+It is left out when there is nothing to add: when the country's first language
+is English (the US, Ireland, India), when GeoNames has no name in it, or when it
+is the same as `name` (Paris, Berlin). Countries with several languages use the
+first one GeoNames lists, so Geneva's `localName` is German, "Genf".
 
 ### Same name, different places
 
