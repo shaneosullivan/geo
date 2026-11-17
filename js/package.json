@@ -2,11 +2,20 @@
   "name": "@chofter/geo",
   "version": "0.1.0",
   "description": "Tiny, dependency-free town and city search over static GeoNames files. No API, no key.",
-  "keywords": ["geonames", "geocoding", "places", "cities", "towns", "autocomplete", "search"],
-  "homepage": "https://geo.chofter.com",
+  "keywords": [
+    "geonames",
+    "geocoding",
+    "places",
+    "cities",
+    "towns",
+    "autocomplete",
+    "search"
+  ],
+  "homepage": "https://github.com/shaneosullivan/geo/tree/main/js#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shaneosullivan/geo.git"
+    "url": "git+https://github.com/shaneosullivan/geo.git",
+    "directory": "js"
   },
   "bugs": "https://github.com/shaneosullivan/geo/issues",
   "license": "MIT",
@@ -23,7 +32,9 @@
   "types": "./dist/geo.d.ts",
   "unpkg": "./dist/geo.global.js",
   "jsdelivr": "./dist/geo.global.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "node build.mjs",
     "test": "node build.mjs && node --test",

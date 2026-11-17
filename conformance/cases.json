@@ -1,0 +1,43 @@
+{
+  "about": "Shared test cases every client must pass. Serve the v1/ folder next to this file as the client's base URL (or stub fetch to read it). `search` cases compare the names of the results, in order; `matched` is the first result's matched alternate name, or null when it matched its own name. `file` is the data file, relative to v1/, that answers the query.",
+  "normalize": [
+    ["  São Paulo ", "sao paulo"],
+    ["St. John's", "st johns"],
+    ["Köln", "koln"],
+    ["Straße", "strasse"],
+    ["Saint-Malo", "saint malo"],
+    ["Dún Laoghaire", "dun laoghaire"],
+    ["Łódź", "lodz"],
+    ["Ærøskøbing", "aeroskobing"],
+    ["O’Fallon", "ofallon"],
+    ["Москва", "москва"],
+    ["", ""]
+  ],
+  "fileKey": [
+    ["a", "a"],
+    ["a ", "a-"],
+    ["s9", "s9"],
+    ["mü", "m~fc"],
+    ["мо", "~43c~43e"]
+  ],
+  "search": [
+    { "country": "IE", "query": "dub", "names": ["Dublin"], "matched": null, "file": "ie/_.json" },
+    { "country": "ie", "query": "dun", "names": ["Dún Laoghaire", "Dunboyne"], "matched": null, "file": "ie/_.json" },
+    { "country": "IE", "query": "", "limit": 2, "names": ["Dublin", "Cork"], "matched": null, "file": "ie/_.json" },
+    { "country": "IE", "query": "baile atha", "names": ["Dublin"], "matched": "Baile Átha Cliath", "file": "ie/_.json" },
+    { "country": "IE", "query": "DUN LAOGHAIRE", "names": ["Dún Laoghaire"], "matched": null, "file": "ie/_.json" },
+    { "country": "IE", "query": "laoghaire", "names": ["Dún Laoghaire"], "matched": null, "file": "ie/_.json" },
+    { "country": "DE", "query": "m", "names": ["Munich", "Mannheim"], "matched": null, "file": "de/m.json" },
+    { "country": "DE", "query": "mu", "names": ["Munich", "Münster", "Murnau"], "matched": null, "file": "de/mu.json" },
+    { "country": "DE", "query": "mur", "names": ["Murnau"], "matched": null, "file": "de/mu.json" },
+    { "country": "DE", "query": "München", "names": ["Munich"], "matched": "München", "file": "de/mu.json" },
+    { "country": "DE", "query": "munster", "names": ["Münster"], "matched": null, "file": "de/mu.json" },
+    { "country": "DE", "query": "koln", "names": ["Cologne"], "matched": "Köln", "file": "de/k.json" },
+    { "country": "DE", "query": "", "limit": 3, "names": ["Cologne", "Munich", "Mannheim"], "matched": null, "file": "de/_.json" },
+    { "country": "DE", "query": "zz", "names": [], "file": null },
+    { "country": "DE", "query": "mx", "names": [], "file": "de/m.json" }
+  ],
+  "errors": [
+    { "country": "XX", "query": "a", "reason": "unknown country: v1/xx/_.json does not exist" }
+  ]
+}

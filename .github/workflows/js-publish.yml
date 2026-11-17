@@ -1,21 +1,25 @@
-# Publishes to npm whenever main has a package.json version that is not on npm yet.
+# Publishes js/ to npm whenever main has a js/package.json version that is not on npm yet.
 # Uses npm trusted publishing (OIDC), so there is no npm token in this repo.
-name: Publish
+name: JS publish
 
 on:
   push:
     branches: [main]
+    paths: ["js/**", "conformance/**", ".github/workflows/js-*.yml"]
   workflow_dispatch:
 
 permissions:
   contents: write # to push the release tag
   id-token: write # for npm trusted publishing and provenance
 
-concurrency: publish
+concurrency: js-publish
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: js
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -45,5 +49,5 @@ jobs:
         run: npm publish --access public
       - if: steps.check.outputs.publish == 'true'
         run: |
-          git tag "v${{ steps.check.outputs.version }}"
-          git push origin "v${{ steps.check.outputs.version }}"
+          git tag "js/v${{ steps.check.outputs.version }}"
+          git push origin "js/v${{ steps.check.outputs.version }}"

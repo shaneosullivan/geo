@@ -1,12 +1,16 @@
-name: Test
+name: JS test
 
 on:
   pull_request:
+    paths: ["js/**", "conformance/**", ".github/workflows/js-*.yml"]
   workflow_dispatch:
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: js
     strategy:
       matrix:
         node: [18, 20, 22, 24]

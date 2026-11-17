@@ -79,5 +79,6 @@ The code is MIT. The data comes from GeoNames under
 [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): if you show results,
 credit GeoNames, for example "Place data © GeoNames".
 
-This repository is a read-only mirror. Issues are welcome; pull requests are
-applied by hand.
+Clients for other languages live alongside this one in
+[shaneosullivan/geo](https://github.com/shaneosullivan/geo) and share its
+conformance tests.

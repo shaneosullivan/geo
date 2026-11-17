@@ -1,5 +1,5 @@
-// Runs the built package against a small hand-made data set in test/fixture.
-// `npm test` builds dist/ first.
+// Runs the built package against the shared conformance cases in ../conformance,
+// plus checks specific to the JavaScript package. `npm test` builds dist/ first.
 import test from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -11,11 +11,13 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const dist = path.join(here, "../dist");
 const { createGeo } = await import(path.join(dist, "geo.js"));
 const internals = await import(path.join(here, "../src/geo.js"));
+const conformance = path.join(here, "../../conformance");
+const cases = JSON.parse(fs.readFileSync(path.join(conformance, "cases.json"), "utf8"));
 
 const requests = [];
 function fixtureFetch(url) {
   requests.push(url);
-  const file = path.join(here, "fixture", new URL(url).pathname);
+  const file = path.join(conformance, new URL(url).pathname);
   if (!fs.existsSync(file)) return Promise.resolve({ ok: false, status: 404 });
   return Promise.resolve({ ok: true, status: 200, json: async () => JSON.parse(fs.readFileSync(file, "utf8")) });
 }
@@ -26,18 +28,33 @@ test("the module exports only createGeo", async () => {
   assert.deepEqual(Object.keys(await import(path.join(dist, "geo.js"))), ["createGeo"]);
 });
 
-test("normalize and fileKey define the file scheme", () => {
-  const { normalize, fileKey, prefixOf } = internals;
-  assert.equal(normalize("  São Paulo "), "sao paulo");
-  assert.equal(normalize("St. John's"), "st johns");
-  assert.equal(normalize("Straße"), "strasse");
-  assert.equal(normalize("Saint-Malo"), "saint malo");
-  assert.equal(fileKey("a "), "a-");
-  assert.equal(fileKey("мо"), "~43c~43e");
-  assert.equal(prefixOf("münchen", 2), "mü");
+test("conformance: normalize and fileKey", () => {
+  for (const [input, expected] of cases.normalize) assert.equal(internals.normalize(input), expected, input);
+  for (const [input, expected] of cases.fileKey) assert.equal(internals.fileKey(input), expected, input);
+  assert.equal(internals.prefixOf("münchen", 2), "mü");
 });
 
-test("small country: one file, full result shape", async () => {
+for (const c of cases.search) {
+  test(`conformance: search ${c.country} ${JSON.stringify(c.query)}`, async () => {
+    const g = createGeo({ baseUrl: "https://geo.test/v1", fetch: fixtureFetch });
+    const before = requests.length;
+    const found = await g.search(c.country, c.query, c.limit ? { limit: c.limit } : undefined);
+    assert.deepEqual(names(found), c.names);
+    if (found.length) assert.equal(found[0].matched ?? null, c.matched);
+    const files = requests.slice(before).map((u) => new URL(u).pathname.replace(/^\/v1\//, ""));
+    const index = `${c.country.toLowerCase()}/_.json`;
+    assert.equal(files[0], index);
+    assert.deepEqual(files.slice(1), c.file && c.file !== index ? [c.file] : []);
+  });
+}
+
+for (const c of cases.errors) {
+  test(`conformance: ${c.country} ${JSON.stringify(c.query)} fails`, async () => {
+    await assert.rejects(geo.search(c.country, c.query));
+  });
+}
+
+test("result shape", async () => {
   const [dublin] = await geo.search("IE", "dub");
   assert.deepEqual(dublin, {
     id: 2964574,
@@ -51,33 +68,8 @@ test("small country: one file, full result shape", async () => {
     label: "Dublin, Leinster, Ireland",
   });
   const before = requests.length;
-  assert.deepEqual(names(await geo.search("ie", "dun")), ["Dún Laoghaire", "Dunboyne"]);
+  await geo.search("ie", "cork");
   assert.equal(requests.length, before, "a second search in a small country needs no fetch");
-});
-
-test("empty query returns the most populous places", async () => {
-  assert.deepEqual(names(await geo.search("IE", "", { limit: 2 })), ["Dublin", "Cork"]);
-});
-
-test("sharded country reads the longest listed prefix", async () => {
-  assert.deepEqual(names(await geo.search("DE", "m")), ["Munich", "Mannheim"]);
-  assert.ok(requests.at(-1).endsWith("/de/m.json"));
-  assert.deepEqual(names(await geo.search("DE", "mur")), ["Murnau"]);
-  assert.ok(requests.at(-1).endsWith("/de/mu.json"));
-  assert.deepEqual(await geo.search("DE", "zz"), []);
-});
-
-test("accents and alternate names", async () => {
-  const [munich] = await geo.search("DE", "München");
-  assert.equal(munich.name, "Munich");
-  assert.equal(munich.matched, "München");
-  assert.equal((await geo.search("DE", "koln"))[0].name, "Cologne");
-  assert.equal((await geo.search("IE", "baile atha"))[0].name, "Dublin");
-  assert.equal((await geo.search("IE", "dun laoghaire"))[0].name, "Dún Laoghaire");
-});
-
-test("exact matches rank first, then population", async () => {
-  assert.deepEqual(names(await geo.search("DE", "mu")), ["Munich", "Münster", "Murnau"]);
 });
 
 test("countries and preload", async () => {
