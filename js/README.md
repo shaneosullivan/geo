@@ -1,4 +1,21 @@
-# @chofter/geo
+<p align="center">
+  <a href="https://geo.chofter.com"
+    ><img
+      src="https://geo.chofter.com/icon.svg"
+      width="112"
+      height="112"
+      alt="Chofter Geo logo: a green dot with a C to its left"
+  /></a>
+</p>
+
+<h1 align="center">@chofter/geo</h1>
+
+<p align="center">
+  <b>Every town and city, one small file away.</b><br />
+  <a href="https://geo.chofter.com">Website and live demo</a> ·
+  <a href="https://github.com/shaneosullivan/geo#data-format">Data format</a> ·
+  <a href="https://github.com/shaneosullivan/geo/tree/main/js">Source</a>
+</p>
 
 Town and city search for any country, as a tiny dependency-free client. There is
 no API and no key. The data is served as static JSON files from
